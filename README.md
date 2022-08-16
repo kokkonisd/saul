@@ -4,7 +4,7 @@ _You need a license for your project? 'saul good, man!_
 
 Saul is a license generator based on [choosealicense.com](https://choosealicense.com).
 
-# how to install
+## how to install
 
 From PyPI:
 
@@ -18,7 +18,7 @@ From source:
 $ python setup.py install
 ```
 
-# how to use
+## how to use
 
 First off, you can list the licenses that are available to you:
 

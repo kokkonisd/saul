@@ -1,0 +1,6 @@
+[flake8]
+exclude = .git,__pycache__,build,dist,.nox,*.egg-info
+filename = *.py
+# Black sets the maximum line length to 88, so we'll use that.
+max-line-length = 88
+

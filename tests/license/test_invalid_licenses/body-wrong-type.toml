@@ -1,0 +1,4 @@
+full_name = "Body Wrong Type"
+spdx_id = "body-wrong-type"
+[body]
+    text = "wrong type"

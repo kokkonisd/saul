@@ -1,0 +1,4 @@
+full_name = "Replace Entry Wrong Type"
+spdx_id = "replace-entry-wrong-type"
+body = "Replace entry wrong type"
+replace = [ 3.1415 ]

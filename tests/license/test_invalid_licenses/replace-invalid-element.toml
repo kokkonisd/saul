@@ -1,0 +1,6 @@
+full_name = "Replace Invalid Element"
+spdx_id = "replace-invalid-element"
+body = "Replace invalid element"
+replace = [
+    { string = "invalid", element = "FOOBARBAZ" }
+]

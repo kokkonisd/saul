@@ -1,0 +1,6 @@
+full_name = "Replace String Not In Body"
+spdx_id = "replace-string-not-in-body"
+body = "Replace string not in body"
+replace = [
+    { string = "notinbody", element = "YEAR_RANGE" }
+]

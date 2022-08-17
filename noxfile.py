@@ -24,7 +24,11 @@ def tests(session: nox.Session) -> None:
 
     # Run the testsuite & coverage report.
     session.run(
-        "pytest", "-vv", "--cov=saul", "--cov-fail-under=100", "--cov-report=html"
+        "pytest",
+        "-vv",
+        "--cov=saul",
+        "--cov-fail-under=100",
+        env={"COVERAGE_FILE": f".coverage.{session.python}"},
     )
 
 

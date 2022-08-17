@@ -118,13 +118,13 @@ def main() -> None:
 
     generate_subparser.set_defaults(func=generate_cmd)
 
-    license_generator = LicenseGenerator(licenses_dir=LICENSES_DIR)
-    parser.set_defaults(func=None, license_generator=license_generator)
+    parser.set_defaults(func=None)
 
     args = parser.parse_args()
     assert args is not None
 
     if args.func is not None:
+        args.license_generator = LicenseGenerator(licenses_dir=LICENSES_DIR)
         args.func(args)
     else:
         parser.print_help()

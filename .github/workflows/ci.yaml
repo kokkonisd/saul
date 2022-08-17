@@ -28,5 +28,5 @@ jobs:
       - name: Run nox
         run: nox
       - name: Upload coverage report
-        if: ${{ matrix.os-name == "ubuntu-latest" && matrix.python-version == "3.9" }}
+        if: ${{ matrix.os-name == 'ubuntu-latest' && matrix.python-version == '3.9' }}
         uses: codecov/codecov-action@v1

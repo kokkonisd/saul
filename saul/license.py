@@ -105,7 +105,7 @@ class LicenseGenerator:
             :param message: the error message to add to the exception/error.
             :return: the complete exception/error object.
             """
-            return error_type(f"{license_path}: {message}")  # type: ignore
+            return error_type(f"{license_path}: {message}")
 
         # There are some mandatory high-level keys that the license TOML file must have,
         # like the body of the license for example.

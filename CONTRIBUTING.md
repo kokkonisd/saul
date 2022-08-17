@@ -99,5 +99,4 @@ Lorem ipsum...
 
 ## style guide
 
-Please try to respect the style guide established by the already existing TOML license
-files.
+Please try to respect the style guide established by the existing TOML license files.

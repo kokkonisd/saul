@@ -207,7 +207,8 @@ class LicenseGenerator:
                     raise LicenseError(
                         error_type=ValueError,
                         message=(
-                            f"Cannot find string of entry '{entry}' in license body."
+                            f"Cannot find string of 'replace' entry '{entry}' in "
+                            "license body."
                         ),
                     )
 
@@ -218,7 +219,10 @@ class LicenseGenerator:
                 except ValueError as e:
                     raise LicenseError(
                         error_type=ValueError,
-                        message=f"Invalid license input element for entry '{entry}'.",
+                        message=(
+                            "Invalid license input element for 'replace' entry "
+                            f"'{entry}'."
+                        ),
                     ) from e
 
         # If there are any remaining keys in the raw license dict (remember, we've

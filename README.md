@@ -65,3 +65,8 @@ previous example is:
 ```
 $ saul generate mit -y 2022 -c me
 ```
+
+
+## how to contribute
+
+Please read the [contributing guide](CONTRIBUTING.md).

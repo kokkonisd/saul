@@ -23,6 +23,28 @@ def parse_license(license_filename, licenses_dir):
         )
 
 
+def test_invalid_licenses_dir():
+    """Test passing an invalid licenses directory to parse from."""
+    with pytest.raises(OSError, match=r"License directory foobarbaznotreal not found."):
+        LicenseGenerator("foobarbaznotreal")
+
+
+def test_invalid_toml(licenses_dir):
+    """Test parsing a license with invalid TOML code."""
+    invalid_toml_dir = os.path.join(
+        os.path.abspath(os.path.join(licenses_dir, os.pardir)), "invalid_toml"
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "Error parsing license file "
+            f"{os.path.join(invalid_toml_dir, 'invalid.toml')}:"
+        ),
+    ):
+        LicenseGenerator(invalid_toml_dir)
+
+
 def test_empty_license(licenses_dir):
     """Test parsing an empty license file."""
     with pytest.raises(
@@ -152,7 +174,7 @@ def test_license_replace_string_not_in_body(licenses_dir):
     with pytest.raises(
         ValueError,
         match=(
-            r"replace-string-not-in-body\.toml: Cannot find string of entry "
+            r"replace-string-not-in-body\.toml: Cannot find string of 'replace' entry "
             r"'{'string': 'notinbody', 'element': 'YEAR_RANGE'}' in license body\."
         ),
     ):
@@ -167,8 +189,34 @@ def test_license_replace_invalid_element(licenses_dir):
     with pytest.raises(
         ValueError,
         match=(
-            r"replace-invalid-element\.toml: Invalid license input element for entry "
-            r"'{'string': 'invalid', 'element': 'FOOBARBAZ'}'\."
+            r"replace-invalid-element\.toml: Invalid license input element for "
+            r"'replace' entry '{'string': 'invalid', 'element': 'FOOBARBAZ'}'\."
         ),
     ):
         parse_license("replace-invalid-element.toml", licenses_dir)
+
+
+def test_license_extra_keys(licenses_dir):
+    """Test parsing a license where there are extra (invalid) keys."""
+    with pytest.raises(
+        KeyError,
+        match=(
+            r"extra-keys\.toml: Unknown keys for license: 'extra_invalid_key', "
+            r"'what_is_this_key'\."
+        ),
+    ):
+        parse_license("extra-keys.toml", licenses_dir)
+
+
+def test_license_extra_replace_keys(licenses_dir):
+    """Test parsing a license where a 'replace' entry has extra (invalid) keys."""
+    with pytest.raises(
+        KeyError,
+        match=(
+            r"replace-extra-keys\.toml: Unknown keys for 'replace' entry "
+            "'{'string': 'keys', 'element': 'YEAR_RANGE', "
+            "'extra_invalid_key': 'invalid', 'what_is_this_key': 'idk'}': "
+            r"'extra_invalid_key', 'what_is_this_key'\."
+        ),
+    ):
+        parse_license("replace-extra-keys.toml", licenses_dir)

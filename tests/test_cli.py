@@ -113,3 +113,13 @@ def test_cli_generate_license_file(saul_cli):
             license_text = license_file.read()
         assert license_text
         assert "GNU GENERAL PUBLIC LICENSE" in license_text
+
+
+def test_cli_generate_non_existent_license(saul_cli):
+    """Test the generation of an unknown/non-existent license."""
+    res = saul_cli.run("generate", "this-is-absolutely-not-a-real-license-3.0")
+
+    assert res.returncode == 1
+    assert (
+        "Unknown license ID 'this-is-absolutely-not-a-real-license-3.0'." in res.stderr
+    )

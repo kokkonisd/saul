@@ -1,0 +1,9 @@
+full_name = "Extra Keys"
+spdx_id = "extra-keys"
+body = "Extra keys"
+
+[[replace]]
+    string = "keys"
+    element = "YEAR_RANGE"
+    extra_invalid_key = "invalid"
+    what_is_this_key = "idk"

@@ -28,7 +28,7 @@ def tests(session: nox.Session) -> None:
         "-vv",
         "--cov=saul",
         "--cov-fail-under=100",
-        env={"COVERAGE_FILE": f".coverage.{session.python}"},
+        "--cov-report=xml",
     )
 
 

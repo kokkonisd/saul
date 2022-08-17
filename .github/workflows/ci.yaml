@@ -29,5 +29,5 @@ jobs:
         if: ${{ matrix.os-name == 'ubuntu-latest' && matrix.python-version == '3.9' }}
         uses: codecov/codecov-action@v3
         with:
-            files: .coverage.${{ matrix.python-version }}
+            files: coverage.xml
             verbose: true

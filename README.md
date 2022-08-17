@@ -1,5 +1,8 @@
 # saul
 
+![CI](https://github.com/kokkonisd/saul/actions/workflows/ci.yaml/badge.svg)
+![codecov](https://codecov.io/gh/kokkonisd/saul/branch/main/graph/badge.svg)
+
 _You need a license for your project? 'saul good, man!_
 
 Saul is a license generator based on [choosealicense.com](https://choosealicense.com).

@@ -23,7 +23,7 @@ def tests(session: nox.Session) -> None:
     session.install("-e", ".")
 
     # Run the testsuite & coverage report.
-    session.run("pytest", "-vv", "--cov=saul")
+    session.run("pytest", "-vv", "--cov=saul", "--cov-fail-under=100")
 
 
 @nox.session(python=MAIN_PYTHON_VERSION)

@@ -1,15 +1,23 @@
-#!/bin/usr/env python
+"""The entrypoint to saul's CLI."""
 
 import argparse
-import pkg_resources
 import sys
 
-from saul.license import LicenseGenerator, LicenseInputElement
+# For some reason, I900 is thrown on this, even though it's a "builtin" of sorts.
+import pkg_resources  # noqa: I900
 
-LICENSES_DIR = pkg_resources.resource_filename(__name__, "licenses")
+from saul.license import LicenseInputElement
+from saul.license.generator import LicenseGenerator
+from saul.license.parser import LicenseParser
+
+LICENSES_DIR = pkg_resources.resource_filename(__name__, "license_templates")
 
 
 def list_cmd(args: argparse.Namespace) -> None:
+    """Run the `list` command.
+
+    :param args: arguments to the command.
+    """
     known_licenses = args.license_generator.known_licenses
     max_id_length = max([len(spdx_id) for spdx_id in known_licenses.keys()])
 
@@ -17,8 +25,8 @@ def list_cmd(args: argparse.Namespace) -> None:
         "\n".join(
             sorted(
                 [
-                    f"{spdx_id:{max_id_length}}: {license['full_name']}"
-                    for spdx_id, license in known_licenses.items()
+                    f"{spdx_id:{max_id_length}}: {_license.full_name}"
+                    for spdx_id, _license in known_licenses.items()
                 ]
             )
         )
@@ -26,6 +34,10 @@ def list_cmd(args: argparse.Namespace) -> None:
 
 
 def generate_cmd(args: argparse.Namespace) -> None:
+    """Run the `generate` command.
+
+    :param args: arguments to the command.
+    """
     # If any license input elements are supplied, do not run in interactive mode (the
     # user probably wants to avoid that by supplying them directly as arguments).
     interactive = not any(
@@ -58,6 +70,7 @@ def generate_cmd(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
+    """Run the main entry point for saul's CLI."""
     parser = argparse.ArgumentParser(description="Generate licenses for your projects.")
 
     subparsers = parser.add_subparsers()
@@ -118,13 +131,15 @@ def main() -> None:
 
     generate_subparser.set_defaults(func=generate_cmd)
 
+    license_parser = LicenseParser(LICENSES_DIR)
     parser.set_defaults(func=None)
 
     args = parser.parse_args()
     assert args is not None
 
     if args.func is not None:
-        args.license_generator = LicenseGenerator(licenses_dir=LICENSES_DIR)
+        licenses = license_parser.parse_license_templates()
+        args.license_generator = LicenseGenerator(licenses)
         args.func(args)
     else:
         parser.print_help()

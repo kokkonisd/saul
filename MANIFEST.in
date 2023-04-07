@@ -1,1 +1,1 @@
-include saul/licenses/*.toml
+include saul/license_templates/*.toml

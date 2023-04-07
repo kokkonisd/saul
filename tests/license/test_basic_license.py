@@ -1,18 +1,18 @@
-from saul.license import LicenseGenerator
+from saul.license.generator import LicenseGenerator
+from saul.license.parser import LicenseParser
 
 
 def test_basic_license(licenses_dir):
-    license_generator = LicenseGenerator(licenses_dir)
+    """Test parsing a license."""
+    license_parser = LicenseParser(licenses_dir)
+    licenses = license_parser.parse_license_templates()
 
-    assert len(license_generator.known_licenses) == 1
-    assert [license_id for license_id in license_generator.known_licenses.keys()][
-        0
-    ] == "test-license-1.0"
+    assert len(licenses) == 1
+    _license = licenses[0]
 
-    license = license_generator.known_licenses["test-license-1.0"]
-    assert license["full_name"] == "Test License 1.0"
-    assert license["spdx_id"] == "Test-License-1.0"
-    assert license["body"] == "\n".join(
+    assert _license.full_name == "Test License 1.0"
+    assert _license.spdx_id == "Test-License-1.0"
+    assert _license.body == "\n".join(
         [
             "    TEST LICENSE 1.0",
             "--------------------",
@@ -24,15 +24,23 @@ def test_basic_license(licenses_dir):
             "",
         ]
     )
-    assert license["replace"] == [
+    assert _license.replace == [
         {"string": "<name>", "element": "COPYRIGHT_HOLDERS"},
         {"string": "<year>", "element": "YEAR_RANGE"},
         {"string": "<project>", "element": "PROJECT_NAME"},
         {"string": "<organization>", "element": "ORGANIZATION"},
         {"string": "<homepage>", "element": "HOMEPAGE"},
     ]
-    assert license["note"] == "Don't use this license; it's not very good."
+    assert _license.note == "Don't use this license; it's not very good."
 
+
+def test_generate_basic_license(licenses_dir):
+    """Test generating a license."""
+    license_parser = LicenseParser(licenses_dir)
+    licenses = license_parser.parse_license_templates()
+    license_generator = LicenseGenerator(licenses)
+
+    """Test generating a license."""
     license_body, license_note = license_generator.generate_license(
         license_id="test-license-1.0",
         year_range="1800-1900",

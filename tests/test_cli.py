@@ -48,7 +48,7 @@ def test_cli_generate_with_input(saul_cli):
     """Test the generation of a license that requires some input."""
     # Feed the input through stdin.
     repl_res = saul_cli.run(
-        "generate", "mit", "-n", input="1980-2022\nJohn Doeman (doeman@corp.com)\n"
+        "generate", "mit", "-n", _input="1980-2022\nJohn Doeman (doeman@corp.com)\n"
     )
     assert "MIT License" in repl_res.stdout
     assert "Copyright (c) 1980-2022 John Doeman (doeman@corp.com)" in repl_res.stdout

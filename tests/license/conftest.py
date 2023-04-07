@@ -1,10 +1,16 @@
-import pytest
 import os
+
+import pytest
 
 
 @pytest.fixture()
 def licenses_dir(request):
-    # There should be a folder containing license files, with the same name as the
+    """Get the licenses directory.
+
+    For a given test, there should be a corresponding directory containing license
+    files.
+    """
+    # There should be a directory containing license files, with the same name as the
     # test itself, without the '.py' at the end.
     test_licenses_dir = request.module.__file__[:-3]
     assert os.path.isdir(

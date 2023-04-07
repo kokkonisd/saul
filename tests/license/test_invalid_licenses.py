@@ -1,9 +1,10 @@
 import os
 import tempfile
+
 import pytest
 import tomlkit
 
-from saul.license import LicenseGenerator
+from saul.license.parser import LicenseParser
 
 
 def parse_license(license_filename, licenses_dir):
@@ -12,21 +13,21 @@ def parse_license(license_filename, licenses_dir):
     This function is a helper to facilitate direct calls to the `_parse_license` method.
     """
     with tempfile.TemporaryDirectory() as temp_dir:
-        license_generator = LicenseGenerator(temp_dir)
-
+        license_parser = LicenseParser(temp_dir)
         license_path = os.path.join(licenses_dir, license_filename)
         with open(license_path, "r") as license_file:
-            raw_license = tomlkit.load(license_file).unwrap()
+            license_dict = tomlkit.load(license_file).unwrap()
 
-        license_generator._parse_license(
-            raw_license=raw_license, license_path=license_path
-        )
+        # Mypy does not track private attribute name mangling, so we're forced to go
+        # through `getattr()`.
+        parse = getattr(license_parser, "_LicenseParser__parse_license_template")
+        parse(license_dict=license_dict, license_path=license_path)
 
 
 def test_invalid_licenses_dir():
     """Test passing an invalid licenses directory to parse from."""
     with pytest.raises(OSError, match=r"License directory foobarbaznotreal not found."):
-        LicenseGenerator("foobarbaznotreal")
+        LicenseParser("foobarbaznotreal")
 
 
 def test_invalid_toml(licenses_dir):
@@ -34,6 +35,7 @@ def test_invalid_toml(licenses_dir):
     invalid_toml_dir = os.path.join(
         os.path.abspath(os.path.join(licenses_dir, os.pardir)), "invalid_toml"
     )
+    license_parser = LicenseParser(invalid_toml_dir)
 
     with pytest.raises(
         ValueError,
@@ -42,7 +44,7 @@ def test_invalid_toml(licenses_dir):
             f"{os.path.join(invalid_toml_dir, 'invalid.toml')}:"
         ),
     ):
-        LicenseGenerator(invalid_toml_dir)
+        license_parser.parse_license_templates()
 
 
 def test_empty_license(licenses_dir):

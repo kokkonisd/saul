@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "saul"
+authors = [
+    { name = "Dimitri Kokkonis", email = "kokkonisd@gmail.com" },
+]
+description = "A simple license generator, based on choosealicense.com."
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["license", "license-manager", "license-generator"]
+license = { text = "MIT" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 4 - Beta",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Unix",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Other Audience",
+]
+dependencies = [
+    "tomlkit",
+]
+dynamic = ["version"]
+
+
+[project.optional-dependencies]
+test = [
+    "nox",
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+]
+
+
+[poject.urls]
+repository = "https://github.com/kokkonisd/saul"
+bug-tracker = "https://github.com/kokkonisd/saul/issues"
+documentation = "https://kokkonisd.github.io/saul"
+
+
+[project.scripts]
+saul = "saul.__main__:main"
+
+
+[tool.setuptools.dynamic]
+version = { attr = "saul.__version__" }
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+
+[tool.isort]
+profile = "black"

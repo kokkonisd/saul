@@ -1,16 +1,16 @@
 """The entrypoint to saul's CLI."""
 
 import argparse
+import importlib.resources
 import sys
-
-# For some reason, I900 is thrown on this, even though it's a "builtin" of sorts.
-import pkg_resources  # noqa: I900
 
 from saul.license import LicenseInputElement
 from saul.license.generator import LicenseGenerator
 from saul.license.parser import LicenseParser
 
-LICENSES_DIR = pkg_resources.resource_filename(__name__, "license_templates")
+from . import license_templates
+
+LICENSES_DIR = str(importlib.resources.path(license_templates, "."))
 
 
 def list_cmd(args: argparse.Namespace) -> None:

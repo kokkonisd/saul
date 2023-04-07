@@ -16,7 +16,7 @@ def tests(session: nox.Session) -> None:
     # Run the testsuite & coverage report.
     session.run(
         "pytest",
-        "-vv",
+        "-vvv",
         "--cov=saul",
         "--no-cov-on-fail",
         "--cov-fail-under=100",

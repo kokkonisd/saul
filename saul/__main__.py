@@ -4,13 +4,15 @@ import argparse
 import importlib.resources
 import sys
 
+import saul
 from saul.license import LicenseInputElement
 from saul.license.generator import LicenseGenerator
 from saul.license.parser import LicenseParser
 
-from . import license_templates
-
-LICENSES_DIR = str(importlib.resources.path(license_templates, "."))
+with importlib.resources.as_file(
+    importlib.resources.files(saul).joinpath("license_templates")
+) as path:
+    LICENSES_DIR = str(path)
 
 
 def list_cmd(args: argparse.Namespace) -> None:

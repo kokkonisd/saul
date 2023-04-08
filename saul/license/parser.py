@@ -6,7 +6,7 @@ This module handles parsing license template files.
 import os
 from typing import Any
 
-import tomlkit
+import tomli
 
 from saul.license import License, LicenseInputElement
 
@@ -57,10 +57,8 @@ class LicenseParser:
         # Parse the known licenses.
         for raw_license_path, raw_license in self.__raw_licenses:
             try:
-                # Make sure to unwrap the TOMLDocument to end up with Plain Old
-                # Python Objects.
-                license_dict = tomlkit.loads(raw_license).unwrap()
-            except tomlkit.exceptions.TOMLKitError as e:
+                license_dict = tomli.loads(raw_license)
+            except tomli.TOMLDecodeError as e:
                 raise ValueError(f"Error parsing license file {raw_license_path}: {e}")
 
             licenses.append(

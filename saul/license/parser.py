@@ -6,9 +6,10 @@ This module handles parsing license template files.
 import os
 from typing import Any
 
+import jsonschema
 import tomli
 
-from saul.license import License, LicenseInputElement
+from saul.license import License, LicenseInputElement, LicenseReplaceElement
 
 
 class LicenseParser:
@@ -16,6 +17,31 @@ class LicenseParser:
 
     MANDATORY_LICENSE_KEYS = ("full_name", "spdx_id", "body")
     MANDATORY_REPLACE_ENTRY_KEYS = ("string", "element")
+
+    LICENSE_TEMPLATE_SCHEMA = {
+        "type": "object",
+        "properties": {
+            "full_name": {"type": "string"},
+            "spdx_id": {"type": "string"},
+            "body": {"type": "string"},
+            "note": {"type": "string"},
+            "replace": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "string": {"type": "string"},
+                        "element": {"type": "string"},
+                    },
+                    "required": ["string", "element"],
+                    "additionalProperties": False,
+                },
+            },
+        },
+        "required": ["full_name", "spdx_id", "body"],
+        "additionalProperties": False,
+    }
 
     def __init__(
         self,
@@ -59,7 +85,9 @@ class LicenseParser:
             try:
                 license_dict = tomli.loads(raw_license)
             except tomli.TOMLDecodeError as e:
-                raise ValueError(f"Error parsing license file {raw_license_path}: {e}")
+                raise tomli.TOMLDecodeError(
+                    f"Error parsing license file {raw_license_path}: {e}"
+                ) from e
 
             licenses.append(
                 self.__parse_license_template(
@@ -83,150 +111,39 @@ class LicenseParser:
         :param license_path: the path to the license TOML file.
         :return: a complete License object (if the parsing is successful).
         """
-
-        def __fail(error_type: type, message: str) -> type:
-            """Generate an exception/error with the path to the license file.
-
-            :param error_type: the type of the exception/error to generate.
-            :param message: the error message to add to the exception/error.
-            :return: the complete exception/error object.
-            """
-            return error_type(f"{license_path}: {message}")
-
-        # There are some mandatory high-level keys that the license TOML file must have,
-        # like the body of the license for example.
-        for mandatory_key in self.MANDATORY_LICENSE_KEYS:
-            if mandatory_key not in license_dict:
-                raise __fail(
-                    error_type=KeyError,
-                    message=f"Key '{mandatory_key}' missing from license.",
-                )
-            # All mandatory keys must be strings.
-            if not isinstance(license_dict[mandatory_key], str):
-                raise __fail(
-                    error_type=TypeError,
-                    message=(
-                        f"Key '{mandatory_key}' must be of type str, not "
-                        f"{type(license_dict[mandatory_key]).__name__}."
-                    ),
-                )
-
-        # We're removing keys from the raw license dict in order to check that we've
-        # gotten all keys at the end. See the relevant check near the end of this
-        # method.
-        full_name = license_dict.pop("full_name")
-        spdx_id = license_dict.pop("spdx_id")
-        body = license_dict.pop("body")
-        note = license_dict.pop("note", None)
-        # Note must also be a string if it exists.
-        if note:
-            if not isinstance(note, str):
-                raise __fail(
-                    error_type=TypeError,
-                    message=(
-                        f"Key 'note' must be of type str, not {type(note).__name__}."
-                    ),
-                )
-        replace = license_dict.pop("replace", None)
-
-        # The structure of the license TOML file allows to define replacements to be
-        # applied to the license when it is generated. These generally involve some user
-        # input, such as the year range of the validity of the license, the name(s) of
-        # the copyright holder(s) etc (see the `LicenseInputElement` enum).
-        # This key is not mandatory; many license texts are to be used as-is, without
-        # any replacements.
-        if replace:
-            # The 'replace' key should be a list of dictionaries, containig the info of
-            # each replacement that should be applied. We call these dictionaries
-            # 'entries' here.
-            if not isinstance(replace, list):
-                raise __fail(
-                    error_type=TypeError,
-                    message=(
-                        "Key 'replace' must be of type list, not "
-                        f"{type(replace).__name__}."
-                    ),
-                )
-
-            for entry in replace:
-                if not isinstance(entry, dict):
-                    raise __fail(
-                        error_type=TypeError,
-                        message=(
-                            f"Entry '{entry}' of key 'replace' must be of type dict, "
-                            f"not {type(entry).__name__}."
-                        ),
-                    )
-
-                # Entries also define mandatory keys, and we must check their presence.
-                for mandatory_key in self.MANDATORY_REPLACE_ENTRY_KEYS:
-                    if mandatory_key not in entry:
-                        raise __fail(
-                            error_type=KeyError,
-                            message=(
-                                f"Key '{mandatory_key}' missing from 'replace' entry "
-                                f"'{entry}'."
-                            ),
-                        )
-
-                # Any other remaining keys in the entry are invalid, so we should raise
-                # an error if they exist.
-                remaining_entry_keys = ", ".join(
-                    [
-                        f"'{key}'"
-                        for key in entry.keys()
-                        if key not in self.MANDATORY_REPLACE_ENTRY_KEYS
-                    ]
-                )
-                if remaining_entry_keys:
-                    raise __fail(
-                        error_type=KeyError,
-                        message=(
-                            f"Unknown keys for 'replace' entry '{entry}': "
-                            f"{remaining_entry_keys}."
-                        ),
-                    )
-
-                # The string to be replaced, defined in the entry, should also exist in
-                # the license body.
-                if entry["string"] not in body:
-                    raise __fail(
-                        error_type=ValueError,
-                        message=(
-                            f"Cannot find string of 'replace' entry '{entry}' in "
-                            "license body."
-                        ),
-                    )
-
-                # The element to replace the entry string with must be a valid
-                # `LicenseInputElement`.
-                try:
-                    LicenseInputElement(entry["element"])
-                except ValueError as e:
-                    raise __fail(
-                        error_type=ValueError,
-                        message=(
-                            "Invalid license input element for 'replace' entry "
-                            f"'{entry}'."
-                        ),
-                    ) from e
-
-        # If there are any remaining keys in the raw license dict (remember, we've
-        # popped off all the valid keys by this point), then they must be invalid.
-        if license_dict:
-            remaining_license_keys = ", ".join(
-                [f"'{key}'" for key in license_dict.keys()]
+        try:
+            jsonschema.validate(
+                instance=license_dict, schema=self.LICENSE_TEMPLATE_SCHEMA
             )
-            raise __fail(
-                error_type=KeyError,
-                message=f"Unknown keys for license: {remaining_license_keys}.",
-            )
+        except jsonschema.ValidationError as e:
+            raise jsonschema.ValidationError(f"{license_path}: {e}") from e
+
+        replace_elements = []
+        for replace_dict in license_dict.get("replace", []):
+            try:
+                replace_element = LicenseReplaceElement(
+                    string=replace_dict["string"],
+                    element=LicenseInputElement(replace_dict["element"]),
+                )
+            except ValueError as e:
+                raise ValueError(
+                    f"{license_path}: Invalid license input element "
+                    f"'{replace_dict['element']}' for 'replace' entry '{replace_dict}'."
+                ) from e
+
+            if replace_element.string not in license_dict["body"]:
+                raise ValueError(
+                    f"{license_path}: Cannot find string '{replace_element.string}' of "
+                    f"'replace' entry '{replace_dict}' in license body."
+                )
+
+            replace_elements.append(replace_element)
 
         # All done, we can return the complete license object.
         return License(
-            full_name=full_name,
-            spdx_id=spdx_id,
-            body=body,
-            note=note,
-            replace=replace,
+            full_name=license_dict["full_name"],
+            spdx_id=license_dict["spdx_id"],
+            body=license_dict["body"],
+            note=license_dict.get("note"),
+            replace=replace_elements,
         )

@@ -89,9 +89,8 @@ class LicenseGenerator:
 
         if _license.replace:
             for entry in _license.replace:
-                string = entry["string"]
-                element = entry["element"]
-                input_element = LicenseInputElement(element)
+                string = entry.string
+                input_element = entry.element
                 input_source = input_element_map[input_element]
 
                 if interactive:

@@ -1,3 +1,4 @@
+from saul.license import LicenseInputElement, LicenseReplaceElement
 from saul.license.generator import LicenseGenerator
 from saul.license.parser import LicenseParser
 
@@ -25,11 +26,19 @@ def test_basic_license(licenses_dir):
         ]
     )
     assert _license.replace == [
-        {"string": "<name>", "element": "COPYRIGHT_HOLDERS"},
-        {"string": "<year>", "element": "YEAR_RANGE"},
-        {"string": "<project>", "element": "PROJECT_NAME"},
-        {"string": "<organization>", "element": "ORGANIZATION"},
-        {"string": "<homepage>", "element": "HOMEPAGE"},
+        LicenseReplaceElement(
+            string="<name>", element=LicenseInputElement.COPYRIGHT_HOLDERS
+        ),
+        LicenseReplaceElement(string="<year>", element=LicenseInputElement.YEAR_RANGE),
+        LicenseReplaceElement(
+            string="<project>", element=LicenseInputElement.PROJECT_NAME
+        ),
+        LicenseReplaceElement(
+            string="<organization>", element=LicenseInputElement.ORGANIZATION
+        ),
+        LicenseReplaceElement(
+            string="<homepage>", element=LicenseInputElement.HOMEPAGE
+        ),
     ]
     assert _license.note == "Don't use this license; it's not very good."
 

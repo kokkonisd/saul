@@ -20,6 +20,21 @@ class LicenseInputElement(enum.Enum):
 
 
 @dataclass
+class LicenseReplaceElement:
+    """Describe a license replace element.
+
+    A replace element defines a string to replace by a license input element in the
+    license body.
+
+    :ivar string: the string to replace.
+    :ivar element: the element to replace the string by.
+    """
+
+    string: str
+    element: LicenseInputElement
+
+
+@dataclass
 class License:
     """Describe a (meta-)license object.
 
@@ -34,5 +49,5 @@ class License:
     full_name: str
     spdx_id: str
     body: str
-    replace: Optional[list[dict[str, str]]]
+    replace: list[LicenseReplaceElement]
     note: Optional[str]

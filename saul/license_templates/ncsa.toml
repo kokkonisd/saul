@@ -1,7 +1,7 @@
 full_name = "University of Illinois/NCSA Open Source License"
 spdx_id = "NCSA"
 replace = [
-    { string = "[year]", element = "YEAR_RANGE" },
+    { string = "[year]", element = "COPYRIGHT_YEAR_RANGE" },
     { string = "[fullname]", element = "COPYRIGHT_HOLDERS" },
     { string = "[project]", element = "ORGANIZATION" },
     { string = "[projecturl]", element = "HOMEPAGE" }

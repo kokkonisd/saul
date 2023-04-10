@@ -1,0 +1,8 @@
+full_name = "Minimal License"
+spdx_id = "MINIMAL"
+
+body = '''
+    MINIMAL LICENSE
+
+This is a minimal license.
+'''

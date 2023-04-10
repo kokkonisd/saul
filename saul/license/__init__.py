@@ -12,11 +12,11 @@ from typing import Optional
 class LicenseInputElement(enum.Enum):
     """Enumerate all the possible data entries needed to complete a license text."""
 
-    YEAR_RANGE = "YEAR_RANGE"
-    COPYRIGHT_HOLDERS = "COPYRIGHT_HOLDERS"
-    ORGANIZATION = "ORGANIZATION"
-    PROJECT_NAME = "PROJECT_NAME"
-    HOMEPAGE = "HOMEPAGE"
+    COPYRIGHT_HOLDERS = "copyright_holders"
+    COPYRIGHT_YEAR_RANGE = "copyright_year_range"
+    ORGANIZATION = "organization"
+    PROJECT_NAME = "project_name"
+    HOMEPAGE = "homepage"
 
 
 @dataclass

@@ -1,6 +1,0 @@
-full_name = "Replace Entry Missing Element"
-spdx_id = "replace-entry-missing-element"
-body = "Replace entry missing element"
-replace = [
-    { string = "<foo>" }
-]

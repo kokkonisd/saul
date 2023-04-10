@@ -1,0 +1,10 @@
+full_name = "Test license"
+spdx_id = "foo"
+
+replace = [
+    { string = "!", element = "WHAT_IS_THIS_ELEMENT" }
+]
+
+body = '''
+Hello!
+'''

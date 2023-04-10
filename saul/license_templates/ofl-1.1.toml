@@ -1,7 +1,7 @@
 full_name = "SIL Open Font License 1.1"
 spdx_id = "OFL-1.1"
 replace = [
-    { string = "[year]", element = "YEAR_RANGE" },
+    { string = "[year]", element = "COPYRIGHT_YEAR_RANGE" },
     { string = "[fullname] ([email])", element = "COPYRIGHT_HOLDERS" },
 ]
 

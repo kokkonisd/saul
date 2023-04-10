@@ -1,0 +1,16 @@
+full_name = "Extra license"
+spdx_id = "XTRA"
+
+replace = [
+    { string = "<y>", element = "COPYRIGHT_YEAR_RANGE" },
+    { string = "<h>", element = "COPYRIGHT_HOLDERS" },
+    { string = "<o>", element = "ORGANIZATION" },
+    { string = "<p>", element = "PROJECT_NAME" },
+    { string = "<s>", element = "HOMEPAGE" },
+]
+
+body = '''
+This license is so extra! (c) <y> <h> <o> <p> <s>
+'''
+
+note = "It also has a note!"

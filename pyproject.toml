@@ -21,7 +21,7 @@ classifiers = [
     "Intended Audience :: Other Audience",
 ]
 dependencies = [
-    "tomli",
+    "rtoml",
     "jsonschema"
 ]
 dynamic = ["version"]
@@ -43,7 +43,7 @@ documentation = "https://kokkonisd.github.io/saul"
 
 
 [project.scripts]
-saul = "saul.__main__:main"
+saul = "saul.cli:main"
 
 
 [tool.setuptools.dynamic]

@@ -1,7 +1,7 @@
 full_name = "BSD 3-Clause Clear License"
 spdx_id = "BSD-3-Clause-Clear"
 replace = [
-    { string = "[year]", element = "YEAR_RANGE" },
+    { string = "[year]", element = "COPYRIGHT_YEAR_RANGE" },
     { string = "[fullname]", element = "COPYRIGHT_HOLDERS" }
 ]
 

@@ -7,16 +7,22 @@ import os
 from typing import Any
 
 import jsonschema
-import tomli
+import rtoml
 
+from saul.exceptions import LicenseParserError
 from saul.license import License, LicenseInputElement, LicenseReplaceElement
 
 
 class LicenseParser:
-    """Implement the LicenseParser class."""
+    """Implement the LicenseParser class.
 
-    MANDATORY_LICENSE_KEYS = ("full_name", "spdx_id", "body")
-    MANDATORY_REPLACE_ENTRY_KEYS = ("string", "element")
+    This class is responsible for parsing license template files. These files contain
+    both metadata for the license as well as the actual license text. The metadata is
+    used to correctly fill in information in the license body for a specific project.
+
+    :cvar LICENSE_TEMPLATE_SCHEMA: the JSON Schema that the license template file must
+        follow.
+    """
 
     LICENSE_TEMPLATE_SCHEMA = {
         "type": "object",
@@ -53,7 +59,8 @@ class LicenseParser:
             containing the body of the license as well as various metadata.
         """
         if not os.path.isdir(licenses_dir):
-            raise OSError(f"License directory {licenses_dir} not found.")
+            raise LicenseParserError(f"Invalid licenses directory {licenses_dir}.")
+
         self.__licenses_dir = licenses_dir
         self.__raw_licenses = []
 
@@ -83,10 +90,10 @@ class LicenseParser:
         # Parse the known licenses.
         for raw_license_path, raw_license in self.__raw_licenses:
             try:
-                license_dict = tomli.loads(raw_license)
-            except tomli.TOMLDecodeError as e:
-                raise tomli.TOMLDecodeError(
-                    f"Error parsing license file {raw_license_path}: {e}"
+                license_dict = rtoml.loads(raw_license)
+            except rtoml.TomlParsingError as e:
+                raise LicenseParserError(
+                    f"Error parsing license file {raw_license_path}: {e}."
                 ) from e
 
             licenses.append(
@@ -116,23 +123,24 @@ class LicenseParser:
                 instance=license_dict, schema=self.LICENSE_TEMPLATE_SCHEMA
             )
         except jsonschema.ValidationError as e:
-            raise jsonschema.ValidationError(f"{license_path}: {e}") from e
+            message = str(e).split("\n")[0].capitalize()
+            raise LicenseParserError(f"{license_path}: {message}.") from e
 
         replace_elements = []
         for replace_dict in license_dict.get("replace", []):
             try:
                 replace_element = LicenseReplaceElement(
                     string=replace_dict["string"],
-                    element=LicenseInputElement(replace_dict["element"]),
+                    element=LicenseInputElement(replace_dict["element"].lower()),
                 )
             except ValueError as e:
-                raise ValueError(
+                raise LicenseParserError(
                     f"{license_path}: Invalid license input element "
                     f"'{replace_dict['element']}' for 'replace' entry '{replace_dict}'."
                 ) from e
 
             if replace_element.string not in license_dict["body"]:
-                raise ValueError(
+                raise LicenseParserError(
                     f"{license_path}: Cannot find string '{replace_element.string}' of "
                     f"'replace' entry '{replace_dict}' in license body."
                 )

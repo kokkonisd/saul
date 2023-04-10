@@ -1,40 +1,26 @@
 import os
-import subprocess
+import shutil
+import tempfile
+from typing import Any, Generator
 
 import pytest
 
-LICENSES_DIR = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), os.pardir, "saul", "license_templates"
-)
-
-assert os.path.isdir(LICENSES_DIR), LICENSES_DIR
-
-
-class SaulCLI:
-    """Dummy object implementing a call to the CLI of saul."""
-
-    def run(self, *args, _input=None, cwd=".") -> subprocess.CompletedProcess:
-        """Run saul in CLI mode with optional arguments.
-
-        :param input: input to feed to the process.
-        :return: the result of the process running saul.
-        """
-        return subprocess.run(
-            ["saul", *args],
-            capture_output=True,
-            text=True,
-            input=_input,
-            cwd=cwd,
-        )
-
 
 @pytest.fixture()
-def saul_cli():
-    """Generate a SaulCLI instance."""
-    yield SaulCLI()
+def test_data_dir(request: Any) -> Generator:
+    """Provide the test data directory associated with a given test.
 
+    This fixture assumes that a directory with the same name as the test exists; that
+    directory is used as the test data directory, containing various data pertaining to
+    the test.
+    """
+    # The test data directory has the same name as the test, minus the `.py` at the end.
+    licenses_dir = request.module.__file__[:-3]
+    assert os.path.isdir(
+        licenses_dir
+    ), f"Missing test data dir for test {request.node.name}."
 
-@pytest.fixture()
-def license_files():
-    """Get the list of license files."""
-    yield os.listdir(LICENSES_DIR)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        shutil.copytree(licenses_dir, temp_dir, dirs_exist_ok=True)
+
+        yield temp_dir

@@ -1,0 +1,11 @@
+full_name = "Needs Homepage"
+spdx_id = "needs_homepage"
+replace = [
+    { string = "`homepage`", element = "HOMEPAGE" }
+]
+
+body = '''
+This license needs the homepage.
+
+Copyright (c) @ `homepage`
+'''

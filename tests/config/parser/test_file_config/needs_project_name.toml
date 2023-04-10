@@ -1,0 +1,11 @@
+full_name = "Needs Project Name"
+spdx_id = "needs_project_name"
+replace = [
+    { string = "%project%", element = "PROJECT_NAME" }
+]
+
+body = '''
+This license needs the project name.
+
+Copyright (c) for %project%.
+'''

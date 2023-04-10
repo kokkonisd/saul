@@ -1,7 +1,7 @@
 full_name = 'BSD 4-Clause "Original" or "Old" License'
 spdx_id = "BSD-4-Clause"
 replace = [
-    { string = "[year]", element = "YEAR_RANGE" },
+    { string = "[year]", element = "COPYRIGHT_YEAR_RANGE" },
     { string = "[fullname]", element = "COPYRIGHT_HOLDERS" },
     { string = "[project]", element = "ORGANIZATION" }
 ]

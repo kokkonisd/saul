@@ -1,0 +1,12 @@
+full_name = "Needs Copyright Holders"
+spdx_id = "needs_copyright_holders"
+replace = [
+    { string = "<year range>", element = "COPYRIGHT_YEAR_RANGE" },
+    { string = "<holder(s)>", element = "COPYRIGHT_HOLDERS" }
+]
+
+body = '''
+This license needs copyright holders.
+
+Copyright (c) <year range> <holder(s)>
+'''

@@ -1,0 +1,4 @@
+full_name = "Test license"
+spdx_id = "foo"
+
+# Missing license body!

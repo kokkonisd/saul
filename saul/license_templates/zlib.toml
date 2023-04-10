@@ -1,7 +1,7 @@
 full_name = "zlib License"
 spdx_id = "Zlib"
 replace = [
-    { string = "[year]", element = "YEAR_RANGE" },
+    { string = "[year]", element = "COPYRIGHT_YEAR_RANGE" },
     { string = "[fullname]", element = "COPYRIGHT_HOLDERS" }
 ]
 

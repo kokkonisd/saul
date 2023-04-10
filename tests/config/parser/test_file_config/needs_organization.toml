@@ -1,0 +1,11 @@
+full_name = "Needs Organization"
+spdx_id = "needs_organization"
+replace = [
+    { string = "ORG", element = "ORGANIZATION" }
+]
+
+body = '''
+This license needs the organization's name.
+
+Copyright (c) ORG
+'''

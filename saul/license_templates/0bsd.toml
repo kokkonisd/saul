@@ -1,7 +1,7 @@
 full_name = "BSD Zero Clause License"
 spdx_id = "0BSD"
 replace = [
-    { string = "[year]", element = "YEAR_RANGE" },
+    { string = "[year]", element = "COPYRIGHT_YEAR_RANGE" },
     { string = "[fullname]", element = "COPYRIGHT_HOLDERS" }
 ]
 

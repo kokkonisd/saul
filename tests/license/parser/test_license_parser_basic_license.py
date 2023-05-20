@@ -41,4 +41,6 @@ def test_license_parser_basic_license(test_data_dir: str) -> None:
 
     actual_license_templates = parser.parse_license_templates()
 
-    assert actual_license_templates == expected_license_templates
+    assert sorted(
+        actual_license_templates, key=lambda _license: _license.spdx_id
+    ) == sorted(expected_license_templates, key=lambda _license: _license.spdx_id)
